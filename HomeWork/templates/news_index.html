@@ -1,0 +1,24 @@
+{% extends 'flatpages/default.html' %}
+
+<!-- Название у нас будет products -->
+{% block title %}
+Post
+{% endblock title %}
+
+<!-- В контенте на странице мы выводим все товары -->
+{% block content %}
+    {% if news %}
+        <table>
+            <tr>
+                <td>Заголовок</td>
+                <td>Дата публикации</td>
+                <td>Текст</td>
+            </tr>
+            <tr>
+                <td>{{news.title}}</td>
+                <td>{{news.date_time|date:'d M Y'}}</td>
+                <td>{{news.text}}</td>
+            </tr>
+        </table>
+    {% endif %}
+{% endblock content %}
