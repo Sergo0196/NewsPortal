@@ -1,5 +1,6 @@
 <!--  наследуемся от шаблона default.html, который мы создавали для flatpages -->
 {% extends 'flatpages/default.html' %}
+{% load custom_filters %}
 
 <!-- Название у нас будет products -->
 {% block title %}
@@ -21,7 +22,7 @@ Post
             <tr>
                 <td>{{ i.title }}</td>
                 <td>{{ i.date_time|date:'d M Y' }}</td>
-                <td>{{ i.text|truncatewords:20 }}</td>
+                <td>{{ i.text|censor }}</td>
 
             </tr>
             {% endfor %}
