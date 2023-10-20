@@ -15,4 +15,4 @@ def censor(text):
             censor_list.append(censor_word)
         else:
             censor_list.append(word)
-    return ''.join(censor_list)
+    return ' '.join(censor_list)
