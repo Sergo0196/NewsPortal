@@ -2,7 +2,7 @@ from django import template
 
 register = template.Library()
 
-bad_words = ['болезнями', 'переговоров', 'работодатель']
+bad_words = ['заявил', 'настоящий', 'болезни']
 
 @register.filter()
 

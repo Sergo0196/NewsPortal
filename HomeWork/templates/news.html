@@ -20,9 +20,9 @@ Post
             </tr>
             {% for i in news %}
             <tr>
-                <td>{{ i.title }}</td>
+                <td>{{ i.title|censor }}</td>
                 <td>{{ i.date_time|date:'d M Y' }}</td>
-                <td>{{ i.text|censor }}</td>
+                <td>{{ i.text|truncatechars:20|censor }}</td>
 
             </tr>
             {% endfor %}
