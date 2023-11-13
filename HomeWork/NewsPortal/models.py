@@ -1,10 +1,15 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models import Sum
+from django.urls import reverse
+
 
 class Author(models.Model):
     name = models.OneToOneField(User, on_delete=models.CASCADE)
     rating = models.SmallIntegerField(default=0)
+
+    def __str__(self):
+        return self.name.username
 
     def update_rating(self):
         postRat = self.post_set.aggregate(postRating=Sum('rating'))
@@ -39,6 +44,7 @@ class Post(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
     rating = models.SmallIntegerField(default=0)
+    added_at = models.DateTimeField(auto_now=True)
 
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
     category = models.ManyToManyField(Category, through='PostCategory', related_name='article')
@@ -56,6 +62,9 @@ class Post(models.Model):
 
     def __str__(self):
         return f'{self.title.title()}: {self.text}'
+
+    def get_absolute_url(self):
+        return reverse('post_detail', args=[str(self.id)])
 
 
 class PostCategory(models.Model):
