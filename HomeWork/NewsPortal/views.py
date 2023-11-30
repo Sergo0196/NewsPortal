@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -10,6 +11,7 @@ from .forms import PostForm, PostCreate
 # Create your views here.
 
 class PostList(ListView):
+
     model = Post
     ordering = '-date_time'
     template_name = 'news.html'
@@ -40,7 +42,8 @@ class PostSearch(ListView):
         context['filterset'] = self.filterset
         return context
 
-class NewsCreate(CreateView):
+class NewsCreate(LoginRequiredMixin,CreateView):
+    raise_exception = True
     form_class = PostCreate
     model = Post
     template_name = 'news_create.html'
