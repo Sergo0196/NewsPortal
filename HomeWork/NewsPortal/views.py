@@ -1,4 +1,4 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -10,8 +10,8 @@ from .forms import PostForm, PostCreate
 
 # Create your views here.
 
-class PostList(ListView):
-
+class PostList(LoginRequiredMixin, ListView):
+    raise_exception = False
     model = Post
     ordering = '-date_time'
     template_name = 'news.html'
@@ -42,8 +42,8 @@ class PostSearch(ListView):
         context['filterset'] = self.filterset
         return context
 
-class NewsCreate(LoginRequiredMixin,CreateView):
-    raise_exception = True
+class NewsCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('NewsPortal.add_post')
     form_class = PostCreate
     model = Post
     template_name = 'news_create.html'
@@ -53,7 +53,8 @@ class NewsCreate(LoginRequiredMixin,CreateView):
         post.category_post = 'NW'
         return super().form_valid(form)
 
-class ArticleCreate(CreateView):
+class ArticleCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('NewsPortal.add_post')
     form_class = PostCreate
     model = Post
     template_name = 'article_create.html'
@@ -64,7 +65,8 @@ class ArticleCreate(CreateView):
         return super().form_valid(form)
 
 
-class NewsUpdate(UpdateView):
+class NewsUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = ('NewsPortal.change_post')
     form_class = PostCreate
     model = Post
     template_name = 'news_edit.html'
@@ -75,7 +77,8 @@ class NewsUpdate(UpdateView):
         return super().form_valid(form)
 
 
-class ArticleUpdate(UpdateView):
+class ArticleUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = ('NewsPortal.change_post')
     form_class = PostCreate
     model = Post
     template_name = 'article_edit.html'
@@ -84,6 +87,12 @@ class ArticleUpdate(UpdateView):
         post = form.save(commit=False)
         post.category_post = 'AR'
         return super().form_valid(form)
+
+class PostUpdate(PermissionRequiredMixin, UpdateView):
+    permission_required = ('NewsPortal.change_post')
+    form_class = PostCreate
+    model = Post
+    template_name = 'post_edit.html'
 
 class NewsDelete(DeleteView):
     model = Post
@@ -109,5 +118,11 @@ class ArticleDelete(DeleteView):
             return obj
         else:
             raise Http404('Article not found')
+
+class PostDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = ("NewsPortal.dlete_post")
+    model = Post
+    template_name = 'post_delete.html'
+    success_url = reverse_lazy('post_list')
 
 

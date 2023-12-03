@@ -11,18 +11,33 @@ Post
 {% block content %}
 <h1>Все новости</h1>
 <h3> Всего публикаций: {{ news|length}} </h3>
+{% if perms.NewsPortal.add_post %}
+    <a href="{% url 'post_create' %}">Добавить новость</a>
+    <a href="{% url 'article_create' %}">Добавить статью</a>
+{% endif %}
     {% if news %}
         <table>
             <tr>
                 <td>Заголовок</td>
                 <td>Дата публикации</td>
                 <td>Текст</td>
+                <td>Действия</td>
             </tr>
             {% for i in news %}
             <tr>
                 <td>{{ i.title|censor }}</td>
                 <td>{{ i.date_time|date:'d M Y' }}</td>
                 <td>{{ i.text|truncatechars:20|censor }}</td>
+
+                <td>
+                    {% if perms.NewsPortal.change_post %}
+                        <a href="{% url 'post_edit' i.id %} ">Изменить</a>
+                    {% endif %}
+                    {% if perms.NewsPortal.delete_post %}
+                    <a href="{% url 'post_delete' i.id %}">Удалить</a>
+                    {% endif %}
+                </td>
+
 
             </tr>
             {% endfor %}
