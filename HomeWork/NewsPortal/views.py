@@ -20,6 +20,8 @@ class PostList(LoginRequiredMixin, ListView):
 
 
 
+
+
 class PostDetail(DetailView):
     model = Post
     template_name = 'news_index.html'

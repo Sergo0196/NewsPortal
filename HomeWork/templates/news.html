@@ -30,15 +30,22 @@ Post
                 <td>{{ i.text|truncatechars:20|censor }}</td>
 
                 <td>
+                {% if i.category_post == 'NW' %}
                     {% if perms.NewsPortal.change_post %}
-                        <a href="{% url 'post_edit' i.id %} ">Изменить</a>
+                        <a href="{% url 'news_edit' i.id %} ">Изменить</a>
                     {% endif %}
                     {% if perms.NewsPortal.delete_post %}
-                    <a href="{% url 'post_delete' i.id %}">Удалить</a>
+                        <a href="{% url 'news_delete' i.id %} ">Удалить</a>
                     {% endif %}
+                {% else %}
+                    {% if perms.NewsPortal.change_post %}
+                        <a href="{% url 'article_edit' i.id %} ">Изменить</a>
+                    {% endif %}
+                    {% if perms.NewsPortal.delete_post %}
+                        <a href="{% url 'article_delete' i.id %} ">Удалить</a>
+                    {% endif %}
+                {% endif %}
                 </td>
-
-
             </tr>
             {% endfor %}
         </table>
