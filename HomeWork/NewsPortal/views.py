@@ -3,9 +3,11 @@ from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, DeleteView, UpdateView
-from .models import Post
+from .models import Post, PostCategory
 from .filters import PostFilter
 from .forms import PostForm, PostCreate
+from django.db import models
+from django.contrib.auth.models import User
 
 
 # Create your views here.
@@ -126,5 +128,17 @@ class PostDelete(PermissionRequiredMixin, DeleteView):
     model = Post
     template_name = 'post_delete.html'
     success_url = reverse_lazy('post_list')
+
+class Subscription(models.Model):
+    user = models.ForeignKey(
+        to=User,
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+    )
+    category = models.ForeignKey(
+        to="PostCategory",
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+    )
 
 
