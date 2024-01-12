@@ -20,6 +20,7 @@ class PostCreate(forms.ModelForm):
             'title',
             'text',
             'author',
+            'category',
         ]
 
         labels = {'text': 'Текст', 'author': 'Автор'}
