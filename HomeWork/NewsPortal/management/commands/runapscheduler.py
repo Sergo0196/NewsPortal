@@ -11,7 +11,7 @@ from django_apscheduler.jobstores import DjangoJobStore
 from django_apscheduler.models import DjangoJobExecution
 from django.core.mail import EmailMultiAlternatives
 
-from NewsPortal.models import Post, Category
+from NewsPortal.models import Post, Category, Subscriber
 
 logger = logging.getLogger(__name__)
 
@@ -22,8 +22,11 @@ def my_job():
     last_week = today - datetime.timedelta(days=7)
     posts = Post.objects.filter(added_at__gte=last_week)
     categories = set(posts.values_list('category__category_name', flat=True))
-    subscribers = set(Category.objects.filter(category_name__in=categories).values_list('subscriptions__email', flat=True))
-
+    emails = []
+    subscriber_list = Category.objects.filter(category_name__in=categories).values_list('subscriptions', flat=True)
+    for sub_id in subscriber_list:
+        emails += Subscriber.objects.filter(pk=sub_id).values_list('user__email', flat=True)
+    emails = set(emails)
     html_content = render_to_string(
         'daily_post.html',
         {
@@ -36,7 +39,7 @@ def my_job():
         subject='Статьи за неделю',
         body='',
         from_email='SergoFire911@yandex.ru',
-        to=subscribers
+        to=emails
     )
 
     msg.attach_alternative(html_content, 'text/html')
@@ -68,7 +71,7 @@ class Command(BaseCommand):
 
         scheduler.add_job(
             my_job,
-            trigger=CronTrigger(day_of_week='fri', hour='15', minute='30'),  # Every 10 seconds
+            trigger=CronTrigger(day_of_week='fri', hour='18', minute='00'),  # Every 10 seconds
             id="my_job",  # The `id` assigned to each job MUST be unique
             max_instances=1,
             replace_existing=True,
