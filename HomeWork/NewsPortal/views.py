@@ -9,6 +9,7 @@ from .forms import PostForm, PostCreate
 from django.contrib.auth.decorators import login_required
 from django.db.models import Exists, OuterRef
 from django.views.decorators.csrf import csrf_protect
+from .tasks import send_mail_task
 
 
 # Create your views here.
@@ -56,6 +57,8 @@ class NewsCreate(PermissionRequiredMixin, CreateView):
     def form_valid(self, form):
         post = form.save(commit=False)
         post.category_post = 'NW'
+        post.save()
+        send_mail_task.delay(post.pk)
         return super().form_valid(form)
 
 class ArticleCreate(PermissionRequiredMixin, CreateView):
